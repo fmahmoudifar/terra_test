@@ -1,10 +1,10 @@
 provider "aws" {
-    region = "us-west-2"
+    region = "us-east-2"
   
 }
 
 resource "aws_instance" "DB_Server" {
-    ami = "ami-0f5fcdfbd140e4ab7"
+    ami = "ami-06e3c045d79fd65d9"
     instance_type = "t2.micro"
     tags = {
       Name = "DB_server"
@@ -13,9 +13,10 @@ resource "aws_instance" "DB_Server" {
 }
 
 resource "aws_instance" "Web_Server" {
-    ami = "ami-0f5fcdfbd140e4ab7"
+    ami = "ami-06e3c045d79fd65d9"
     instance_type = "t2.micro"
-    security_groups = [ aws_security_group.Web_SG.name ]
+    # security_groups = [ aws_security_group.Web_SG.name ]
+    vpc_security_group_ids = [aws_security_group.Web_SG.id]
     user_data = file("server-script.sh")
     user_data_replace_on_change = true
     tags = {
@@ -46,7 +47,7 @@ resource "aws_security_group" "Web_SG" {
     name = "Allow_Web_Traffic"
 
     dynamic "ingress" {
-        iterator = "port"
+        iterator = port
         for_each = var.ingress
         content {
             from_port   = port.value
@@ -57,7 +58,7 @@ resource "aws_security_group" "Web_SG" {
     }
 
      dynamic "egress" {
-        iterator = "port"
+        iterator = port
         for_each = var.egress
         content {
             from_port   = port.value
