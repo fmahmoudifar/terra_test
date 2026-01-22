@@ -15,9 +15,8 @@ resource "aws_instance" "DB_Server" {
 resource "aws_instance" "Web_Server" {
     ami = "ami-0f5fcdfbd140e4ab7"
     instance_type = "t2.micro"
-
-    vpc_security_group_ids = [aws_security_group.Web_SG.id]
-    user_data = file("${path.module}/server-script.sh")
+    security_groups = [ aws_security_group.Web_SG.name ]
+    user_data = file("server-script.sh")
     user_data_replace_on_change = true
     tags = {
       Name = "Web_Server"
@@ -30,13 +29,6 @@ resource "aws_eip" "Web_EIP" {
   
 }
 
-output "DB_IP" {
-  value = aws_instance.DB_Server.public_ip
-}
-
-output "Web_IP" {
-  value = aws_eip.Web_EIP.public_ip
-}
 
 variable "ingress" {
     type = list(number)
@@ -74,4 +66,12 @@ resource "aws_security_group" "Web_SG" {
             cidr_blocks = ["0.0.0.0/0"]
         }
     }  
+}
+
+output "DB_IP" {
+  value = aws_instance.DB_Server.private_ip
+}
+
+output "Web_IP" {
+  value = aws_eip.Web_EIP.public_ip
 }
