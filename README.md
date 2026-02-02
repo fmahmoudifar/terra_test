@@ -7,6 +7,11 @@ terraform apply -target aws_instance.ubuntu
 terraform import aws_instance.ubuntu i-0843ee57c41f913b5
 terraform state rm aws_instance.ubuntu
 
+terraform plan -var-file=test.tfvars
+terraform plan -var-file=prod.tfvars
+
+
+
 
 ## Dev Container (portable setup)
 
@@ -22,3 +27,4 @@ Inside the container, create an isolated AWS profile:
 
 aws configure --profile terra_test
 aws sts get-caller-identity --profile terra_test
+
